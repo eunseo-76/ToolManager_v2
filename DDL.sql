@@ -1,4 +1,4 @@
--- 1. 유저 권한 및 DB 생성
+S-- 1. 유저 권한 및 DB 생성
 
 show databases;
 
@@ -141,3 +141,15 @@ CREATE table if not exists ss_serial
 );
 
 desc ss_serial;
+
+CREATE TABLE if NOT EXISTS user
+(
+	  user_id	INT NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '사용자ID'
+	, email	VARCHAR(255) NOT NULL COMMENT '이메일'
+	, PASSWORD	VARCHAR(255) NOT NULL COMMENT '비밀번호'
+	, NAME	VARCHAR(255) NOT NULL COMMENT '실명'
+	, nickname	VARCHAR(50) NOT NULL COMMENT '닉네임'
+	, birth	DATE NOT NULL COMMENT '생년월일'
+	, auth	CHAR(1) NOT NULL COMMENT '역할'	-- enum? boolean? char?
+);
+
