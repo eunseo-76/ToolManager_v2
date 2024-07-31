@@ -1,4 +1,4 @@
-S-- 1. 유저 권한 및 DB 생성
+-- 1. 유저 권한 및 DB 생성
 
 show databases;
 
@@ -32,7 +32,11 @@ create table if not exists customer
 	, email	varchar(255) comment '이메일'
 	, website	varchar(255) comment '웹사이트'
 	, payment_day	varchar(255) comment '결제일'
+	, is_deleted	BOOLEAN COMMENT '삭제여부'
+	, deleted_date	DATETIME COMMENT '삭제일'
+	, delete_user	INT COMMENT '삭제한사용자'
 );
+alter table customer add constraint fk_delete_user foreign key (delete_user) references user(user_id);
 
 desc customer;
 
@@ -54,6 +58,9 @@ CREATE table if not exists tool
 	, arrival_date	date comment '입고일'
 	, memo	varchar(255) comment '메모'
 	, jig_or_ss	char(1) not null comment '지그제판구분'
+	, is_deleted	BOOLEAN NOT NULL DEFAULT 0 COMMENT '삭제여부'
+	, deleted_date DATETIME COMMENT '삭제일'
+	, delete_user	INT COMMENT '삭제한사용자'
 );
 
 -- 테이블 순서 구분 없이 생성하기 위해 외래 키 제약 조건 별도 추가
@@ -66,6 +73,7 @@ alter table tool add constraint fk_jig_cutting foreign key (j_cutting) reference
 alter table tool add constraint fk_ss_type foreign key (s_type) references ss_type(ss_type_id);
 alter table tool add constraint fk_ss_mesh foreign key (s_mesh) references ss_mesh(ss_mesh_id);
 alter table tool add constraint fk_ss_emulsion foreign key (s_emulsion) references ss_emulsion_type(ss_emulsion_id);
+alter table tool add constraint fk_delete_user_tool FOREIGN KEY (delete_user) REFERENCES user(user_id);
 
 alter table tool add constraint check_jig_or_ss check (
     (jig_or_ss = 'j' and j_serial is not null and j_type is not null and j_thickness is not null and j_cutting is not null and j_hole_count is not null
@@ -150,6 +158,7 @@ CREATE TABLE if NOT EXISTS user
 	, NAME	VARCHAR(255) NOT NULL COMMENT '실명'
 	, nickname	VARCHAR(50) NOT NULL COMMENT '닉네임'
 	, birth	DATE NOT NULL COMMENT '생년월일'
-	, auth	CHAR(1) NOT NULL COMMENT '역할'	-- enum? boolean? char?
+	, auth	CHAR(1) NOT NULL COMMENT '역할'	-- enum? boolean? char?=
+	, is_active	BOOLEAN NOT NULL COMMENT '탈퇴여부'
+	, deactivated_date	DATETIME COMMENT '탈퇴일'
 );
-
